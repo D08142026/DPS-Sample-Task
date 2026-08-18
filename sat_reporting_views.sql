@@ -1,5 +1,5 @@
 -- Reporting views for SAT assessment analysis
--- Run with: sqlite3 "C:\Users\duncan_anderson\Downloads\assessment_data.db" < "C:\Users\duncan_anderson\Downloads\sat_reporting_views.sql"
+-- Run with: sqlite3 "C:\Users\duncan_anderson\OneDrive\Documents\GitHub\DPS Sample Task\assessment_data.db" < "C:\Users\duncan_anderson\OneDrive\Documents\GitHub\DPS Sample Task\sat_reporting_views.sql"
 
 DROP VIEW IF EXISTS vw_sat_student_latest_score;
 CREATE VIEW vw_sat_student_latest_score AS
