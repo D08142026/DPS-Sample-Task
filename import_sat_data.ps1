@@ -1,5 +1,5 @@
-# PowerShell script to pull the nightly SAT file via FTP/curl and load it into SQLite. Proxy ftp address added
-
+# PowerShell script to pull the nightly SAT file via FTP/curl and load it into SQLite
+# Example: .\import_sat_data.ps1 -DbPath "assessment_data.db" -FtpServer "ftp.collegeboard.org" -RemoteDirectory "/nightly" -RemoteFile "Senior Data Specialist Hiring Activity - Data File.csv"
 
 param(
     [string]$DbPath = "assessment_data.db",
@@ -53,6 +53,21 @@ else {
 if (-not (Test-Path $localFile)) {
     Write-Error "Downloaded file not found: $localFile"
     exit 1
+}
+
+Write-Host "Running Python ETL step before database load" -ForegroundColor Cyan
+
+# Run the Python import script first so it can preprocess or validate the downloaded file
+$pythonScript = "import_sat_data.py"
+if (-not (Test-Path $pythonScript)) {
+    Write-Error "Python import script not found: $pythonScript"
+    exit 1
+}
+
+& python $pythonScript --csv "$localFile" --db "$DbPath"
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Python ETL step failed with exit code $LASTEXITCODE"
+    exit $LASTEXITCODE
 }
 
 Write-Host "Importing SAT data from $localFile into $DbPath" -ForegroundColor Cyan
